@@ -1,0 +1,31 @@
+service: java-email-ms
+
+provider:
+  name: aws
+  runtime: java8
+  memorySize: 1512
+  timeout: 30
+  stage: ${opt:stage,'dev'}
+  region: ${opt:region, 'us-east-1'}
+  profile: ${opt:profile, "pedro"}
+  endpointType: REGIONAL
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action: "*"
+      Resource: "*"
+
+resources:
+  Description: Example
+
+package:
+  individually: true
+
+functions:
+  SpringBootApi:
+    package: 
+      artifact: target/java-email-ms-1.0-lambda-package.zip
+    handler: br.com.ms.ses.mail.StreamLambdaHandler::handleRequest
+    events:
+      - http:
+          path: /{proxy+}
+          method: ANY
